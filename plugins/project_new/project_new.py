@@ -1,4 +1,4 @@
-#!/usr/bin/python
+﻿#!/usr/bin/python
 # ----------------------------------------------------------------------------
 # cocos "new" plugin
 #
@@ -49,8 +49,13 @@ class CCPluginNew(cocos.CCPlugin):
 
     def init(self, args):
         self._projname = args.name
-        self._projdir = unicode(
-            os.path.abspath(os.path.join(args.directory, self._projname)), "utf-8")
+
+        #self._projdir = unicode(os.path.abspath(os.path.join(args.directory, self._projname)), "utf-8")
+        cocosdir = self.get_cocos2d_path()
+        joined = os.path.join(cocosdir, "..", self._projname)
+        absdir = os.path.abspath(joined)
+        self._projdir = absdir
+
         self._lang = args.language
         self._package = args.package
         self._tpname = args.template
@@ -98,8 +103,12 @@ class CCPluginNew(cocos.CCPlugin):
                             required=True,
                             choices=["cpp", "lua", "js"],
                             help=MultiLanguage.get_string('NEW_ARG_LANG'))
-        parser.add_argument("-d", "--directory", metavar="DIRECTORY",
-                            help=MultiLanguage.get_string('NEW_ARG_DIR'))
+        #parser.add_argument("-d", "--directory", metavar="DIRECTORY",
+        #                    help=MultiLanguage.get_string('NEW_ARG_DIR'))
+        parser.add_argument('-d', action='help',  help=
+                            '''This version of cocos is configured to place projects in a directory
+                               next to the cocos installation directory so it can be shared.
+                               DO NOT USE THE -d paramter!''')
         parser.add_argument("-t", "--template", metavar="TEMPLATE_NAME",
                             help=MultiLanguage.get_string('NEW_ARG_TEMPLATE'))
         parser.add_argument(
@@ -131,8 +140,8 @@ class CCPluginNew(cocos.CCPlugin):
         if not args.mac_bundleid:
             args.mac_bundleid = args.package
 
-        if not args.directory:
-            args.directory = os.getcwd()
+        #if not args.directory:
+        #    args.directory = os.getcwd()
 
         if not args.template:
             args.template = 'default'
